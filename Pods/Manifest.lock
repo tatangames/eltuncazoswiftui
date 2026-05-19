@@ -1,0 +1,38 @@
+PODS:
+  - Alamofire (5.11.2)
+  - AlertToast (1.3.9)
+  - RxSwift (6.9.0)
+  - SDWebImage (5.21.7):
+    - SDWebImage/Core (= 5.21.7)
+  - SDWebImage/Core (5.21.7)
+  - SDWebImageSwiftUI (3.1.4):
+    - SDWebImage (~> 5.21.1)
+  - SwiftyJSON (5.0.2)
+
+DEPENDENCIES:
+  - Alamofire
+  - AlertToast
+  - RxSwift
+  - SDWebImageSwiftUI
+  - SwiftyJSON
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - AlertToast
+    - RxSwift
+    - SDWebImage
+    - SDWebImageSwiftUI
+    - SwiftyJSON
+
+SPEC CHECKSUMS:
+  Alamofire: 400275dd1c6d87d95a041861d2a59da4b520a203
+  AlertToast: e8db15da727beff75500bcf33a78cd617f408fa1
+  RxSwift: 31649ace6aceeb422e16ff71c60804f9c3281ed9
+  SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
+  SDWebImageSwiftUI: 965cdad5a7210b7ec06aaa1a3d17180d0a152250
+  SwiftyJSON: f5b1bf1cd8dd53cd25887ac0eabcfd92301c6a5a
+
+PODFILE CHECKSUM: 4b0cc9d37676d6c39979d23fd6d5f2dac714f027
+
+COCOAPODS: 1.16.2
