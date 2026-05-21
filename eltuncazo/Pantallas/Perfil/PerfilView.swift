@@ -141,7 +141,7 @@ struct PerfilView: View {
         }
         .navigationBarHidden(true)
         .navigationDestination(isPresented: $irACambioPassword) {
-            // CambioPasswordView()
+            ActualizarPasswordView()
         }
         .navigationDestination(isPresented: $irALogin) {
             LoginView()

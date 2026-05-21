@@ -163,6 +163,59 @@ class ListadoMenuPrincipalViewModel: ObservableObject {
 }
 
 
-
-
-
+class ActualizarPasswordViewModel: ObservableObject {
+    
+    @Published var loadingSpinner: Bool = false
+    @Published var isRequestInProgress: Bool = false
+    
+    let disposeBag = DisposeBag()
+    
+    func actualizarPasswordRX(id: String, password: String, completion: @escaping (Result<JSON, Error>) -> Void) {
+        
+        guard !isRequestInProgress else { return }
+        
+        isRequestInProgress = true
+        loadingSpinner = true
+        
+        let parameters: [String: Any] = [
+            "id": id,
+            "password": password
+        ]
+        
+        Observable<JSON>.create { observer in
+            let request = AF.request(apiActualizarPassword,
+                                     method: .post,
+                                     parameters: parameters)
+                .responseData { response in
+                    switch response.result {
+                    case .success(let data):
+                        let json = JSON(data)
+                        observer.onNext(json)
+                        observer.onCompleted()
+                    case .failure(let error):
+                        observer.onError(error)
+                    }
+                }
+            return Disposables.create { request.cancel() }
+        }
+        .retry(when: { errors in
+            errors.enumerated().flatMap { (_, error) -> Observable<Int> in
+                print("Error: \(error). Reintentando...")
+                return Observable.timer(.seconds(2), scheduler: MainScheduler.instance)
+            }
+        })
+        .subscribe(
+            onNext: { json in
+                self.loadingSpinner = false
+                self.isRequestInProgress = false
+                completion(.success(json))
+            },
+            onError: { error in
+                self.loadingSpinner = false
+                self.isRequestInProgress = false
+                completion(.failure(error))
+            }
+        )
+        .disposed(by: disposeBag)
+    }
+}
