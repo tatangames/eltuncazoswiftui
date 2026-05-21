@@ -24,7 +24,7 @@ let apiRegistrarDireccion = baseUrl + "cliente/nueva/direccion"
 let apiSeleccionarDireccion = baseUrl + "cliente/seleccionar/direccion"
 let apiEliminarDireccion = baseUrl + "cliente/eliminar/direccion"
 
-
+let apiListadoProductos = baseUrl + "cliente/servicios/listado/menu"
 
 
 

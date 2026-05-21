@@ -36,3 +36,32 @@ struct ModeloDireccionesArray: Codable {
     let seleccionado: Int
     let telefono: String?
 }
+
+
+struct ModeloListadoProductos: Codable {
+    let success: Int
+    let productos: [ModeloProductosArray]
+}
+
+struct ModeloProductosArray: Codable {
+    let id: Int
+    let id_bloque_servicios: Int
+    let nombre: String?
+    let posicion: Int?
+    let activo: Int
+    let productos: [ModeloProductosTerceraArray]
+}
+
+struct ModeloProductosTerceraArray: Codable {
+    let id: Int
+    let id_categorias: Int
+    let nombre: String?
+    let imagen: String?
+    let descripcion: String?
+    let precio: String?
+    let activo: Int
+    let posicion: Int?
+    let utiliza_nota: Int
+    let nota: String?
+    let utiliza_imagen: Int
+}

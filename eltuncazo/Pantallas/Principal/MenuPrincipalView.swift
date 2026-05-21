@@ -18,11 +18,16 @@ struct MenuPrincipalView: View {
     @State private var openLoadingSpinner: Bool = false
     @StateObject private var toastViewModel = ToastViewModel()
     
-    let navController: (Int, String) -> Void // id, nombre
+    // Navegación a productos
+    @State private var irAProductos: Bool = false
+    @State private var idCategoriaSeleccionada: Int = 0
+    @State private var nombreCategoriaSeleccionada: String = ""
+    
+    let navController: (Int, String) -> Void
     
     var body: some View {
         ZStack {
-            Color(hex: "#F5F0E8") // colorCremaV1
+            Color(hex: "#F5F0E8")
                 .ignoresSafeArea()
             
             ScrollView {
@@ -34,7 +39,9 @@ struct MenuPrincipalView: View {
                             imagenUrl: imagenUrl,
                             nombre: categoria.nombre ?? ""
                         ) {
-                            navController(categoria.id, categoria.nombre ?? "")
+                            idCategoriaSeleccionada = categoria.id
+                            nombreCategoriaSeleccionada = categoria.nombre ?? ""
+                            irAProductos = true
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 6)
@@ -54,6 +61,12 @@ struct MenuPrincipalView: View {
         }
         .onAppear {
             cargarMenu()
+        }
+        .navigationDestination(isPresented: $irAProductos) {
+            ListadoProductosView(
+                idCategoria: idCategoriaSeleccionada,
+                nombreCategoria: nombreCategoriaSeleccionada
+            )
         }
         .toast(isPresenting: $toastViewModel.showToastBool, alert: {
             toastViewModel.customToast

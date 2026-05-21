@@ -408,3 +408,57 @@ class RegistroNuevaDireccionViewModel: ObservableObject {
 }
 
 
+class ListadoProductosViewModel: ObservableObject {
+    
+    @Published var loadingSpinner: Bool = false
+    @Published var isRequestInProgress: Bool = false
+    
+    let disposeBag = DisposeBag()
+    
+    func listadoProductosRX(idCategoria: Int, completion: @escaping (Result<ModeloListadoProductos, Error>) -> Void) {
+        
+        guard !isRequestInProgress else { return }
+        isRequestInProgress = true
+        loadingSpinner = true
+        
+        let parameters: [String: Any] = ["categoria": idCategoria]
+        
+        Observable<ModeloListadoProductos>.create { observer in
+            let request = AF.request(apiListadoProductos,
+                                     method: .post,
+                                     parameters: parameters)
+                .responseDecodable(of: ModeloListadoProductos.self) { response in
+                    switch response.result {
+                    case .success(let modelo):
+                        observer.onNext(modelo)
+                        observer.onCompleted()
+                    case .failure(let error):
+                        observer.onError(error)
+                    }
+                }
+            return Disposables.create { request.cancel() }
+        }
+        .retry(when: { errors in
+            errors.enumerated().flatMap { (_, error) -> Observable<Int> in
+                print("Error: \(error). Reintentando...")
+                return Observable.timer(.seconds(2), scheduler: MainScheduler.instance)
+            }
+        })
+        .subscribe(
+            onNext: { modelo in
+                self.loadingSpinner = false
+                self.isRequestInProgress = false
+                completion(.success(modelo))
+            },
+            onError: { error in
+                self.loadingSpinner = false
+                self.isRequestInProgress = false
+                completion(.failure(error))
+            }
+        )
+        .disposed(by: disposeBag)
+    }
+}
+
+
+
