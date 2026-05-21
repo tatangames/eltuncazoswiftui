@@ -231,16 +231,13 @@ class ListadoDireccionesViewModel: ObservableObject {
     func listadoDireccionesRX(id: String, completion: @escaping (Result<ModeloListadoDirecciones, Error>) -> Void) {
         
         guard !isRequestInProgress else { return }
-        
         isRequestInProgress = true
         loadingSpinner = true
         
         let parameters: [String: Any] = ["id": id]
         
         Observable<ModeloListadoDirecciones>.create { observer in
-            let request = AF.request(apiListadoDirecciones,
-                                     method: .post,
-                                     parameters: parameters)
+            let request = AF.request(apiListadoDirecciones, method: .post, parameters: parameters)
                 .responseDecodable(of: ModeloListadoDirecciones.self) { response in
                     switch response.result {
                     case .success(let modelo):
@@ -254,7 +251,6 @@ class ListadoDireccionesViewModel: ObservableObject {
         }
         .retry(when: { errors in
             errors.enumerated().flatMap { (_, error) -> Observable<Int> in
-                print("Error: \(error). Reintentando...")
                 return Observable.timer(.seconds(2), scheduler: MainScheduler.instance)
             }
         })
@@ -267,6 +263,76 @@ class ListadoDireccionesViewModel: ObservableObject {
             onError: { error in
                 self.loadingSpinner = false
                 self.isRequestInProgress = false
+                completion(.failure(error))
+            }
+        )
+        .disposed(by: disposeBag)
+    }
+    
+    func seleccionarDireccionRX(id: String, dirid: Int, completion: @escaping (Result<JSON, Error>) -> Void) {
+        
+        loadingSpinner = true
+        
+        let parameters: [String: Any] = [
+            "id": id,
+            "dirid": dirid
+        ]
+        
+        Observable<JSON>.create { observer in
+            let request = AF.request(apiSeleccionarDireccion, method: .post, parameters: parameters)
+                .responseData { response in
+                    switch response.result {
+                    case .success(let data):
+                        observer.onNext(JSON(data))
+                        observer.onCompleted()
+                    case .failure(let error):
+                        observer.onError(error)
+                    }
+                }
+            return Disposables.create { request.cancel() }
+        }
+        .subscribe(
+            onNext: { json in
+                self.loadingSpinner = false
+                completion(.success(json))
+            },
+            onError: { error in
+                self.loadingSpinner = false
+                completion(.failure(error))
+            }
+        )
+        .disposed(by: disposeBag)
+    }
+    
+    func eliminarDireccionRX(id: String, dirid: Int, completion: @escaping (Result<JSON, Error>) -> Void) {
+        
+        loadingSpinner = true
+        
+        let parameters: [String: Any] = [
+            "id": id,
+            "dirid": dirid
+        ]
+        
+        Observable<JSON>.create { observer in
+            let request = AF.request(apiEliminarDireccion, method: .post, parameters: parameters)
+                .responseData { response in
+                    switch response.result {
+                    case .success(let data):
+                        observer.onNext(JSON(data))
+                        observer.onCompleted()
+                    case .failure(let error):
+                        observer.onError(error)
+                    }
+                }
+            return Disposables.create { request.cancel() }
+        }
+        .subscribe(
+            onNext: { json in
+                self.loadingSpinner = false
+                completion(.success(json))
+            },
+            onError: { error in
+                self.loadingSpinner = false
                 completion(.failure(error))
             }
         )
@@ -340,3 +406,5 @@ class RegistroNuevaDireccionViewModel: ObservableObject {
         .disposed(by: disposeBag)
     }
 }
+
+
