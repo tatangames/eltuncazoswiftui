@@ -1,0 +1,29 @@
+//
+//  ApiNetwork.swift
+//  eltuncazo
+//
+//  Created by Jonathan on 20/5/26.
+//
+
+// ULTIMA ACTUALIZACION: 21/03/2025
+// se utiliza en sidebar pie de pagina
+let apiVersionApp = "v. 2.0.0"
+
+//let baseUrl = "http://165.22.176.229/api/"
+//let baseUrlImagen = "http://165.22.176.229/storage/imagenes/"
+
+let baseUrl = "http://192.168.75.128:8000/api/"
+let baseUrlImagen = "http://192.168.75.128:8000/storage/imagenes/"
+
+let apiLogin = baseUrl+"cliente/login"
+let apiRegistro = baseUrl+"cliente/registro"
+
+
+
+
+
+
+
+
+
+

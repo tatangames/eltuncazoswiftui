@@ -11,7 +11,8 @@ import SwiftUI
 struct eltuncazoApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashScreenView()
+                .preferredColorScheme(.light)
         }
     }
 }
