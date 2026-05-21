@@ -16,6 +16,9 @@ struct LoginView: View {
     @StateObject private var toastViewModel = ToastViewModel()
     let viewModel = LoginViewModel()
     
+    // Estado para navegar al registro
+    @State private var irARegistro: Bool = false
+    
     let colorPrimario = Color(hex: "#512DA8")
     
     var body: some View {
@@ -148,7 +151,8 @@ struct LoginView: View {
                             
                             // Registrarse
                             Button(action: {
-                                // navegar a registro
+                                
+                                irARegistro = true
                             }) {
                                 Text("Registrarse")
                                     .font(.system(size: 17, weight: .bold))
@@ -185,6 +189,10 @@ struct LoginView: View {
                         .transition(.opacity)
                         .zIndex(10)
                 }
+            }
+            // Dentro del .navigationDestination que ya tienes o agrega uno:
+            .navigationDestination(isPresented: $irARegistro) {
+                RegistroView()
             }
             .navigationDestination(isPresented: $boolCambiarVista) {
                 // PrincipalView()

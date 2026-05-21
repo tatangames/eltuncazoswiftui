@@ -144,3 +144,166 @@ extension Bundle {
         return infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
     }
 }
+
+
+struct BloqueTextFieldPasswordView: View {
+    
+    @Binding var text: String
+    @Binding var isPasswordVisible: Bool
+    var maxLength: Int
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Contraseña")
+                .font(.subheadline)
+                .foregroundColor(.gray)
+            
+            HStack(spacing: 10) {
+                Image(systemName: "lock.fill")
+                    .foregroundColor(.gray)
+                
+                if isPasswordVisible {
+                    TextField("Ingresa tu contraseña", text: $text)
+                        .autocapitalization(.none)
+                        .autocorrectionDisabled()
+                        .foregroundColor(.black)
+                        .onChange(of: text) { newValue in
+                            if newValue.count > maxLength {
+                                text = String(newValue.prefix(maxLength))
+                            }
+                        }
+                } else {
+                    SecureField("Ingresa tu contraseña", text: $text)
+                        .foregroundColor(.black)
+                        .onChange(of: text) { newValue in
+                            if newValue.count > maxLength {
+                                text = String(newValue.prefix(maxLength))
+                            }
+                        }
+                }
+                
+                Button(action: {
+                    isPasswordVisible.toggle()
+                }) {
+                    Image(systemName: isPasswordVisible ? "eye.slash.fill" : "eye.fill")
+                        .foregroundColor(.gray)
+                }
+            }
+            .padding(14)
+            .background(Color(.systemGray6))
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+            )
+        }
+    }
+}
+
+
+struct BloqueTextFieldLoginView: View {
+    
+    @Binding var text: String
+    var maxLength: Int
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Usuario")
+                .font(.subheadline)
+                .foregroundColor(.gray)
+            
+            HStack(spacing: 10) {
+                Image(systemName: "person.fill")
+                    .foregroundColor(.gray)
+                
+                TextField("Ingresa tu usuario", text: $text)
+                    .autocapitalization(.none)
+                    .autocorrectionDisabled()
+                    .foregroundColor(.black)
+                    .onChange(of: text) { newValue in
+                        if newValue.count > maxLength {
+                            text = String(newValue.prefix(maxLength))
+                        }
+                    }
+            }
+            .padding(14)
+            .background(Color(.systemGray6))
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+            )
+        }
+    }
+}
+
+
+struct CustomModal2ButtonsView: View {
+    
+    @Binding var isActive: Bool
+    var message: String
+    var onAccept: () -> Void
+    var labelAceptar: String
+    var labelCancelar: String
+    
+    let colorPrimario = Color(hex: "#512DA8")
+    
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                
+                // Mensaje
+                Text(message)
+                    .font(.system(size: 16))
+                    .foregroundColor(.black)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 24)
+                
+                Divider()
+                
+                // Botones
+                HStack(spacing: 0) {
+                    
+                    // Cancelar
+                    Button(action: {
+                        isActive = false
+                    }) {
+                        Text(labelCancelar)
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.gray)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                    }
+                    
+                    Divider()
+                        .frame(height: 50)
+                    
+                    // Aceptar
+                    Button(action: {
+                        onAccept()
+                    }) {
+                        Text(labelAceptar)
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(colorPrimario)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                    }
+                }
+            }
+            .background(Color.white)
+            .cornerRadius(16)
+            .shadow(color: .black.opacity(0.2), radius: 12, x: 0, y: 4)
+            .padding(.horizontal, 40)
+        }
+    }
+}
+
+
+
+
+
+
