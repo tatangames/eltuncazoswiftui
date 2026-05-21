@@ -35,6 +35,8 @@ struct RegistroView: View {
     @StateObject private var toastViewModel = ToastViewModel()
     let viewModel = RegistroViewModel()
     
+    @AppStorage(DatosGuardadosKeys.idCliente) private var idUsuario: String = ""
+    
     let colorPrimario = Color(hex: "#512DA8")
     
     var body: some View {
@@ -171,7 +173,7 @@ struct RegistroView: View {
                 }
             }
             .navigationDestination(isPresented: $boolCambiarVista) {
-                // PrincipalView()
+                 PrincipalView()
             }
             .onReceive(viewModel.$loadingSpinner) { loading in
                 openLoadingSpinner = loading
@@ -237,10 +239,11 @@ struct RegistroView: View {
                         showModalTitulo = true
                     case 2:
                         // Registrado correctamente
-                        let id = json["id"].string ?? ""
-                        //TokenManager.shared.saveID(id)
-                        //boolCambiarVista = true
-                        print("Hola \(id)")
+                        let _id = json["id"].string ?? ""
+                        idUsuario = _id
+                        
+                        boolCambiarVista = true
+                    
                     default:
                         mensajeError()
                     }

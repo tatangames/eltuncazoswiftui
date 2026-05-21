@@ -19,6 +19,8 @@ struct LoginView: View {
     // Estado para navegar al registro
     @State private var irARegistro: Bool = false
     
+    @AppStorage(DatosGuardadosKeys.idCliente) private var idUsuario: String = ""
+    
     let colorPrimario = Color(hex: "#512DA8")
     
     var body: some View {
@@ -195,7 +197,7 @@ struct LoginView: View {
                 RegistroView()
             }
             .navigationDestination(isPresented: $boolCambiarVista) {
-                // PrincipalView()
+                 PrincipalView()
             }
             .onReceive(viewModel.$loadingSpinner) { loading in
                 openLoadingSpinner = loading
@@ -250,6 +252,9 @@ struct LoginView: View {
                     let success = json["success"].int ?? 0
                     switch success {
                     case 1:
+                        let _id = json["id"].string ?? ""
+                        idUsuario = _id
+                        
                         boolCambiarVista = true
                     default:
                         modalMensaje = "Datos incorrectos"

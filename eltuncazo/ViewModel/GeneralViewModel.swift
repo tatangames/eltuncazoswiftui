@@ -101,3 +101,68 @@ class RegistroViewModel: ObservableObject {
         }
     }
 }
+
+
+
+
+
+class ListadoMenuPrincipalViewModel: ObservableObject {
+    
+    @Published var loadingSpinner: Bool = false
+    @Published var isRequestInProgress: Bool = false
+    @Published var error: Error?
+    
+    let disposeBag = DisposeBag()
+    
+    func listadoMenuPrincipalRX(id: String, completion: @escaping (Result<ModeloMenuPrincipal, Error>) -> Void) {
+        
+        guard !isRequestInProgress else { return }
+        
+        isRequestInProgress = true
+        loadingSpinner = true
+        
+        let parameters: [String: Any] = ["id": id]
+        
+        Observable<ModeloMenuPrincipal>.create { observer in
+            let request = AF.request(apiListadoMenuPrincipal,
+                                     method: .post,
+                                     parameters: parameters)
+                .responseDecodable(of: ModeloMenuPrincipal.self) { response in
+                    switch response.result {
+                    case .success(let modelo):
+                        observer.onNext(modelo)
+                        observer.onCompleted()
+                    case .failure(let error):
+                        observer.onError(error)
+                    }
+                }
+            
+            return Disposables.create { request.cancel() }
+        }
+        .retry(when: { errors in
+            errors.enumerated().flatMap { (attempt, error) -> Observable<Int> in
+                print("Error: \(error). Reintentando...")
+                return Observable.timer(.seconds(2), scheduler: MainScheduler.instance)
+            }
+        })
+        .subscribe(
+            onNext: { modelo in
+                self.loadingSpinner = false
+                self.isRequestInProgress = false
+                completion(.success(modelo))
+            },
+            onError: { error in
+                self.error = error
+                self.loadingSpinner = false
+                self.isRequestInProgress = false
+                completion(.failure(error))
+            }
+        )
+        .disposed(by: disposeBag)
+    }
+}
+
+
+
+
+

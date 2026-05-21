@@ -303,6 +303,66 @@ struct CustomModal2ButtonsView: View {
 }
 
 
+struct CardCategoriaView: View {
+    
+    let imagenUrl: String
+    let nombre: String
+    let onTap: () -> Void
+    
+    var body: some View {
+        Button(action: onTap) {
+            VStack(spacing: 0) {
+                
+                // Imagen 16:9
+                AsyncImage(url: URL(string: imagenUrl)) { phase in
+                    switch phase {
+                    case .empty:
+                        ZStack {
+                            Color(hex: "#F5F5F5")
+                            ProgressView()
+                        }
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    case .failure:
+                        ZStack {
+                            Color(hex: "#F5F5F5")
+                            Image(systemName: "camera.fill")
+                                .foregroundColor(.gray)
+                                .font(.system(size: 32))
+                        }
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .aspectRatio(16/9, contentMode: .fit)
+                .clipped()
+                .clipShape(
+                    UnevenRoundedRectangle(
+                        topLeadingRadius: 16,
+                        topTrailingRadius: 16
+                    )
+                )
+                
+                // Nombre
+                Text(nombre)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.black)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+        .background(Color.white)
+        .cornerRadius(16)
+        .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
+    }
+}
 
 
 

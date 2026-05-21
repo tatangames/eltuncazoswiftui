@@ -17,7 +17,7 @@ struct SplashScreenView: View {
             if id.isEmpty {
                 LoginView()
             } else {
-               // PrincipalView()
+                PrincipalView()
             }
         } else {
             Color.white

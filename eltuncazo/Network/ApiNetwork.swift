@@ -17,6 +17,7 @@ let baseUrlImagen = "http://192.168.75.128:8000/storage/imagenes/"
 
 let apiLogin = baseUrl+"cliente/login"
 let apiRegistro = baseUrl+"cliente/registro"
+let apiListadoMenuPrincipal = baseUrl + "cliente/lista/servicios-bloque"
 
 
 
