@@ -19,8 +19,8 @@ let apiLogin = baseUrl+"cliente/login"
 let apiRegistro = baseUrl+"cliente/registro"
 let apiListadoMenuPrincipal = baseUrl + "cliente/lista/servicios-bloque"
 let apiActualizarPassword = baseUrl + "cliente/actualizar/password"
-
-
+let apiListadoDirecciones = baseUrl + "cliente/listado/direcciones"
+let apiRegistrarDireccion = baseUrl + "cliente/nueva/direccion"
 
 
 

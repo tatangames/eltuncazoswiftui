@@ -147,7 +147,7 @@ struct PerfilView: View {
             LoginView()
         }
         .navigationDestination(isPresented: $irADirecciones) {
-            // DireccionesView()
+             MisDireccionesView()
         }
     }
     
