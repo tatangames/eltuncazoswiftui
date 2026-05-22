@@ -9,12 +9,14 @@ struct EstadoOrdenView: View {
     
     @StateObject private var viewModel = InformacionOrdenViewModel()
     @StateObject private var viewModelCancelar = CancelarOrdenViewModel()
+    @StateObject private var viewModelCompletar = CompletarOrdenViewModel()
     @StateObject private var toastViewModel = ToastViewModel()
     
     @State private var orden: ModeloOrdenesIndividualArray? = nil
     @State private var openLoadingSpinner: Bool = false
     
     @State private var showModalCancelar: Bool = false
+    @State private var showModalCompletar: Bool = false
     @State private var showModalRespuesta: Bool = false
     @State private var modalTitulo: String = ""
     @State private var modalMensaje: String = ""
@@ -106,6 +108,21 @@ struct EstadoOrdenView: View {
                                 colorActivo: colorVerde
                             )
                             
+                            // ── BOTÓN COMPLETAR ───────────────────
+                            if ord.estado_iniciada == 1 {
+                                Button(action: { showModalCompletar = true }) {
+                                    Text("Completar Orden")
+                                        .font(.system(size: 16, weight: .semibold))
+                                        .foregroundColor(.white)
+                                        .frame(width: UIScreen.main.bounds.width * 0.65)
+                                        .frame(height: 46)
+                                        .background(colorVerde)
+                                        .cornerRadius(14)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .frame(maxWidth: .infinity, alignment: .center)
+                            }
+                            
                             // Estado cancelada
                             if ord.estado_cancelada == 1 {
                                 EstadoItemView(
@@ -169,6 +186,46 @@ struct EstadoOrdenView: View {
                 .zIndex(20)
             }
             
+            // ── MODAL COMPLETAR ───────────────────────────────────
+            if showModalCompletar {
+                ZStack {
+                    Color.black.opacity(0.4).ignoresSafeArea()
+                    VStack(spacing: 0) {
+                        Text("¿Finalizar esta orden?")
+                            .font(.system(size: 16))
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 24)
+                        Rectangle().fill(Color.gray.opacity(0.3)).frame(height: 1)
+                        HStack(spacing: 0) {
+                            Button(action: { showModalCompletar = false }) {
+                                Text("No")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.gray)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 50)
+                            }
+                            Rectangle().fill(Color.gray.opacity(0.3)).frame(width: 1, height: 50)
+                            Button(action: {
+                                showModalCompletar = false
+                                serverCompletar()
+                            }) {
+                                Text("Sí")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(colorVerde)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 50)
+                            }
+                        }
+                    }
+                    .background(Color.white)
+                    .cornerRadius(16)
+                    .shadow(color: .black.opacity(0.2), radius: 12, x: 0, y: 4)
+                    .padding(.horizontal, 40)
+                }
+                .zIndex(20)
+            }
+            
             // ── MODAL RESPUESTA ───────────────────────────────────
             if showModalRespuesta {
                 ZStack {
@@ -215,6 +272,7 @@ struct EstadoOrdenView: View {
         }
         .onReceive(viewModel.$loadingSpinner) { loading in openLoadingSpinner = loading }
         .onReceive(viewModelCancelar.$loadingSpinner) { loading in openLoadingSpinner = loading }
+        .onReceive(viewModelCompletar.$loadingSpinner) { loading in openLoadingSpinner = loading }
         .onAppear { cargarOrden() }
         .toast(isPresenting: $toastViewModel.showToastBool, alert: { toastViewModel.customToast })
     }
@@ -258,6 +316,25 @@ struct EstadoOrdenView: View {
                     self.showModalRespuesta = true
                 case 2:
                     self.toastViewModel.showCustomToast(with: "Orden cancelada", tipoColor: .verde)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        self.dismiss()
+                    }
+                default:
+                    self.toastViewModel.showCustomToast(with: "Error, intentar de nuevo", tipoColor: .gris)
+                }
+            case .failure:
+                self.toastViewModel.showCustomToast(with: "Error, intentar de nuevo", tipoColor: .gris)
+            }
+        }
+    }
+    
+    func serverCompletar() {
+        viewModelCompletar.completarOrdenRX(ordenid: idOrden) { result in
+            switch result {
+            case .success(let modelo):
+                switch modelo.success {
+                case 1:
+                    self.toastViewModel.showCustomToast(with: "Orden completada", tipoColor: .verde)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                         self.dismiss()
                     }

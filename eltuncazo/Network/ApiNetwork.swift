@@ -35,8 +35,8 @@ let apiVerOrdenParaEnviar = baseUrl + "cliente/carrito/ver/proceso-orden"
 let apiEnviarOrdenFinal = baseUrl + "cliente/proceso/orden/estado-1"
 
 let apiListadoOrdenes = baseUrl + "cliente/ver/ordenes-activas"
-let apiOcultarOrden = baseUrl + "cliente/proceso/completar/orden"
-
 let apiEstadoOrden = baseUrl + "cliente/ver/estado-orden"
 let apiListadoProductosOrden = baseUrl + "cliente/listado/productos/ordenes"
 let apiCancelarOrden = baseUrl + "cliente/proceso/orden/cancelar"
+
+let apiCompletarOrden = baseUrl + "cliente/proceso/completar/orden"

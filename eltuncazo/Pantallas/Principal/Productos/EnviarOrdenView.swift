@@ -4,6 +4,7 @@ import AlertToast
 struct EnviarOrdenView: View {
     
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var appState: AppState
     @AppStorage(DatosGuardadosKeys.idCliente) private var idUsuario: String = ""
     
     @StateObject private var viewModel = InformacionOrdenParaEnviarViewModel()
@@ -27,7 +28,6 @@ struct EnviarOrdenView: View {
     @State private var showModalFinal: Bool = false
     @State private var modalTituloFinal: String = ""
     @State private var modalMensajeFinal: String = ""
-    @State private var irAOrdenes: Bool = false
     
     let colorPrimario = Color(hex: "#512DA8")
     
@@ -45,7 +45,6 @@ struct EnviarOrdenView: View {
                 // ── TOOLBAR ──────────────────────────────────────
                 ZStack {
                     colorPrimario.ignoresSafeArea(edges: .top)
-                    
                     HStack {
                         Button(action: { dismiss() }) {
                             Image(systemName: "chevron.left")
@@ -53,15 +52,11 @@ struct EnviarOrdenView: View {
                                 .foregroundColor(.white)
                         }
                         .padding(.leading, 16)
-                        
                         Spacer()
-                        
                         Text("Enviar Orden")
                             .font(.system(size: 20, weight: .bold))
                             .foregroundColor(.white)
-                        
                         Spacer()
-                        
                         Image(systemName: "chevron.left")
                             .foregroundColor(.clear)
                             .padding(.trailing, 16)
@@ -75,7 +70,6 @@ struct EnviarOrdenView: View {
                     ScrollView {
                         VStack(spacing: 0) {
                             
-                            // ── FILA TOTAL ────────────────────────
                             HStack {
                                 Text("Total")
                                     .font(.system(size: 18, weight: .bold))
@@ -93,14 +87,12 @@ struct EnviarOrdenView: View {
                                 .frame(height: 1.5)
                                 .padding(.horizontal, 12)
                             
-                            // ── CARD MINIMO CONSUMO ───────────────
                             if minimoInt == 0 {
                                 VStack(alignment: .leading, spacing: 10) {
                                     Text("Mínimo de Consumo")
                                         .font(.system(size: 17, weight: .bold))
                                         .foregroundColor(.red)
                                         .frame(maxWidth: .infinity, alignment: .center)
-                                    
                                     Text(mensajeMinimoString)
                                         .font(.system(size: 16))
                                         .foregroundColor(.black)
@@ -114,7 +106,6 @@ struct EnviarOrdenView: View {
                                 .padding(.top, 16)
                             }
                             
-                            // ── CARD DIRECCION ENTREGA ────────────
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("Dirección de Entrega")
                                     .font(.system(size: 17, weight: .bold))
@@ -147,16 +138,13 @@ struct EnviarOrdenView: View {
                             .padding(.horizontal, 12)
                             .padding(.top, 16)
                             
-                            // ── DIVIDER ───────────────────────────
                             Rectangle()
                                 .fill(Color.gray.opacity(0.3))
                                 .frame(height: 1.5)
                                 .padding(.horizontal, 12)
                                 .padding(.top, 20)
                             
-                            // ── NOTA ──────────────────────────────
                             VStack(alignment: .leading, spacing: 10) {
-                                
                                 HStack(spacing: 6) {
                                     Image(systemName: "bell.fill")
                                         .font(.system(size: 14))
@@ -165,7 +153,6 @@ struct EnviarOrdenView: View {
                                         .font(.system(size: 16, weight: .semibold))
                                         .foregroundColor(.black)
                                 }
-                                
                                 Text("Ej: tocar timbre...")
                                     .font(.system(size: 14))
                                     .foregroundColor(.gray)
@@ -184,7 +171,6 @@ struct EnviarOrdenView: View {
                                         .onChange(of: nota) { val in
                                             if val.count > 300 { nota = String(val.prefix(300)) }
                                         }
-                                    
                                     HStack {
                                         Spacer()
                                         Text("\(nota.count)/300")
@@ -213,7 +199,7 @@ struct EnviarOrdenView: View {
                 Spacer()
             }
             
-            // ── BOTÓN CONFIRMAR FIJO ABAJO ────────────────────────
+            // ── BOTÓN CONFIRMAR ───────────────────────────────────
             if datosCargados {
                 VStack {
                     Spacer()
@@ -332,7 +318,9 @@ struct EnviarOrdenView: View {
                         Rectangle().fill(Color.gray.opacity(0.3)).frame(height: 1)
                         Button(action: {
                             showModalFinal = false
-                            irAOrdenes = true
+                            // Cambia tab a ordenes y cierra el carrito desde AppState
+                            appState.selectedTab = "ordenes"
+                            appState.irACarrito = false
                         }) {
                             Text("Aceptar")
                                 .font(.system(size: 16, weight: .bold))
@@ -359,9 +347,6 @@ struct EnviarOrdenView: View {
         .onReceive(viewModel.$loadingSpinner) { loading in openLoadingSpinner = loading }
         .onReceive(viewModelEnviar.$loadingSpinner) { loading in openLoadingSpinner = loading }
         .onAppear { cargarInformacion() }
-        .navigationDestination(isPresented: $irAOrdenes) {
-            OrdenesView()
-        }
         .toast(isPresenting: $toastViewModel.showToastBool, alert: { toastViewModel.customToast })
     }
     

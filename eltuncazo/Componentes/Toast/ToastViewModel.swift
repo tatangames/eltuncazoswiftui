@@ -33,3 +33,9 @@ class ToastViewModel: ObservableObject {
         showToastBool = true
     }
 }
+
+
+class AppState: ObservableObject {
+    @Published var selectedTab: String = "menu"
+    @Published var irACarrito: Bool = false
+}

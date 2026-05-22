@@ -4,6 +4,7 @@ import AlertToast
 struct CarritoComprasView: View {
     
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var appState: AppState
     @AppStorage(DatosGuardadosKeys.idCliente) private var idUsuario: String = ""
     
     @StateObject private var viewModel = ListadoCarritoViewModel()
@@ -22,12 +23,12 @@ struct CarritoComprasView: View {
     @State private var showModalBorrarProducto: Bool = false
     @State private var carritoidAEliminar: Int = 0
     @State private var irADirecciones: Bool = false
+    @State private var irAEnviarOrden: Bool = false
     
     let colorPrimario = Color(hex: "#512DA8")
     let colorNaranja = Color(hex: "#F57C00")
     
     var carritoVacio: Bool { productos.isEmpty }
-    @State private var irAEnviarOrden: Bool = false
     
     var colorBarra: Color {
         if carritoVacio { return .gray }
@@ -148,9 +149,9 @@ struct CarritoComprasView: View {
                         if carritoVacio { return }
                         if !hayDireccionRegistrada {
                             irADirecciones = true
-                            return }
+                            return
+                        }
                         if !hayProductoNoDisponible {
-                            // navegar a enviar orden
                             irAEnviarOrden = true
                         }
                     }) {
@@ -181,7 +182,6 @@ struct CarritoComprasView: View {
             if showModalBorrarCarrito {
                 ZStack {
                     Color.black.opacity(0.4).ignoresSafeArea()
-                    
                     VStack(spacing: 0) {
                         Text("¿Borrar carrito de compras?")
                             .font(.system(size: 16))
@@ -189,9 +189,7 @@ struct CarritoComprasView: View {
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 24)
-                        
                         Rectangle().fill(Color.gray.opacity(0.3)).frame(height: 1)
-                        
                         HStack(spacing: 0) {
                             Button(action: { showModalBorrarCarrito = false }) {
                                 Text("No")
@@ -225,7 +223,6 @@ struct CarritoComprasView: View {
             if showModalBorrarProducto {
                 ZStack {
                     Color.black.opacity(0.4).ignoresSafeArea()
-                    
                     VStack(spacing: 0) {
                         Text("¿Eliminar este producto?")
                             .font(.system(size: 16))
@@ -233,9 +230,7 @@ struct CarritoComprasView: View {
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 24)
-                        
                         Rectangle().fill(Color.gray.opacity(0.3)).frame(height: 1)
-                        
                         HStack(spacing: 0) {
                             Button(action: { showModalBorrarProducto = false }) {
                                 Text("No")
@@ -278,11 +273,11 @@ struct CarritoComprasView: View {
         .onReceive(viewModelBorrarProducto.$loadingSpinner) { loading in openLoadingSpinner = loading }
         .navigationDestination(isPresented: $irAEnviarOrden) {
             EnviarOrdenView()
+                .environmentObject(appState)
         }
         .navigationDestination(isPresented: $irADirecciones) {
             MisDireccionesView()
                 .onDisappear {
-                    // Recargar carrito al regresar para verificar si ya tiene dirección
                     datosCargados = false
                     cargarCarrito()
                 }
@@ -423,12 +418,12 @@ struct ItemCarritoView: View {
                 .foregroundColor(.black)
                 .frame(minWidth: 60, alignment: .trailing)
             
-            // Icono editar (decorativo, el NavigationLink maneja la navegación)
+            // Icono editar
             Image(systemName: "pencil.circle.fill")
                 .font(.system(size: 22))
                 .foregroundColor(colorPrimario)
             
-            // Botón eliminar — usa simultaneousGesture para no activar el NavigationLink
+            // Botón eliminar
             Button(action: { }) {
                 Image(systemName: "trash.fill")
                     .font(.system(size: 18))

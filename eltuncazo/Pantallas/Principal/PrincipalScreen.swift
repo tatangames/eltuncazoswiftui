@@ -2,8 +2,7 @@ import SwiftUI
 
 struct PrincipalView: View {
     
-    @State private var selectedTab: String = "menu"
-    @State private var irACarrito: Bool = false
+    @StateObject private var appState = AppState()
     @State private var canClickCart: Bool = true
     @State private var irAPerfil: Bool = false
     
@@ -22,23 +21,17 @@ struct PrincipalView: View {
                         
                         HStack {
                             Spacer()
-                            
                             Text("El Tuncazo")
                                 .font(.system(size: 22, weight: .bold))
                                 .foregroundColor(.white)
-                            
                             Spacer()
                         }
                         .padding(.top, 8)
                         
-                        // Icono persona solo cuando está en menú
-                        if selectedTab == "menu" {
+                        if appState.selectedTab == "menu" {
                             HStack {
                                 Spacer()
-                                
-                                Button(action: {
-                                    irAPerfil = true
-                                }) {
+                                Button(action: { irAPerfil = true }) {
                                     Image(systemName: "person.circle.fill")
                                         .font(.system(size: 28))
                                         .foregroundColor(.white)
@@ -52,11 +45,9 @@ struct PrincipalView: View {
                     
                     // ── CONTENIDO ────────────────────────────────
                     Group {
-                        switch selectedTab {
+                        switch appState.selectedTab {
                         case "menu":
-                            MenuPrincipalView { id, nombre in
-                                // navegar a productos
-                            }
+                            MenuPrincipalView { id, nombre in }
                         case "ordenes":
                             OrdenesView()
                         default:
@@ -67,7 +58,7 @@ struct PrincipalView: View {
                 }
                 .padding(.bottom, 68)
                 
-                // ── BOTTOM BAR PERSONALIZADO ─────────────────────
+                // ── BOTTOM BAR ───────────────────────────────────
                 ZStack {
                     Rectangle()
                         .fill(Color.white)
@@ -75,31 +66,27 @@ struct PrincipalView: View {
                         .frame(height: 68)
                     
                     HStack(spacing: 0) {
-                        
-                        // Tab Menú
-                        Button(action: { selectedTab = "menu" }) {
+                        Button(action: { appState.selectedTab = "menu" }) {
                             VStack(spacing: 4) {
                                 Image(systemName: "fork.knife")
                                     .font(.system(size: 22))
                                 Text("Menú")
-                                    .font(.system(size: 12, weight: selectedTab == "menu" ? .bold : .regular))
+                                    .font(.system(size: 12, weight: appState.selectedTab == "menu" ? .bold : .regular))
                             }
-                            .foregroundColor(selectedTab == "menu" ? colorPrimario : .gray)
+                            .foregroundColor(appState.selectedTab == "menu" ? colorPrimario : .gray)
                             .frame(maxWidth: .infinity)
                         }
                         
-                        Spacer()
-                            .frame(maxWidth: .infinity)
+                        Spacer().frame(maxWidth: .infinity)
                         
-                        // Tab Órdenes
-                        Button(action: { selectedTab = "ordenes" }) {
+                        Button(action: { appState.selectedTab = "ordenes" }) {
                             VStack(spacing: 4) {
                                 Image(systemName: "list.bullet.rectangle")
                                     .font(.system(size: 22))
                                 Text("Órdenes")
-                                    .font(.system(size: 12, weight: selectedTab == "ordenes" ? .bold : .regular))
+                                    .font(.system(size: 12, weight: appState.selectedTab == "ordenes" ? .bold : .regular))
                             }
-                            .foregroundColor(selectedTab == "ordenes" ? colorPrimario : .gray)
+                            .foregroundColor(appState.selectedTab == "ordenes" ? colorPrimario : .gray)
                             .frame(maxWidth: .infinity)
                         }
                     }
@@ -109,7 +96,7 @@ struct PrincipalView: View {
                     Button(action: {
                         guard canClickCart else { return }
                         canClickCart = false
-                        irACarrito = true
+                        appState.irACarrito = true
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             canClickCart = true
                         }
@@ -119,7 +106,6 @@ struct PrincipalView: View {
                                 .fill(Color.white)
                                 .frame(width: 62, height: 62)
                                 .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 2)
-                            
                             Image(systemName: "cart.fill")
                                 .font(.system(size: 26))
                                 .foregroundColor(Color(hex: "#448AFF"))
@@ -131,8 +117,9 @@ struct PrincipalView: View {
             }
             .ignoresSafeArea(edges: .bottom)
             .navigationBarHidden(true)
-            .navigationDestination(isPresented: $irACarrito) {
+            .navigationDestination(isPresented: $appState.irACarrito) {
                 CarritoComprasView()
+                    .environmentObject(appState)
             }
             .navigationDestination(isPresented: $irAPerfil) {
                 PerfilView()

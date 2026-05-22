@@ -6,7 +6,6 @@ struct OrdenesView: View {
     @AppStorage(DatosGuardadosKeys.idCliente) private var idUsuario: String = ""
     
     @StateObject private var viewModel = ListadoOrdenesViewModel()
-    @StateObject private var viewModelOcultar = OcultarOrdenViewModel()
     @StateObject private var toastViewModel = ToastViewModel()
     
     @State private var ordenes: [ModeloOrdenesArray] = []
@@ -27,9 +26,7 @@ struct OrdenesView: View {
             
             if datosCargados {
                 if ordenes.isEmpty {
-                    // ── VACÍO ─────────────────────────────────────
                     ScrollView {
-                        // ScrollView necesario para que refreshable funcione en lista vacía
                         VStack(spacing: 16) {
                             Spacer().frame(height: 100)
                             Image(systemName: "cart")
@@ -48,7 +45,6 @@ struct OrdenesView: View {
                         await refreshOrdenes()
                     }
                 } else {
-                    // ── LISTA ─────────────────────────────────────
                     List {
                         ForEach(ordenes, id: \.id) { orden in
                             CardOrdenView(
@@ -59,9 +55,6 @@ struct OrdenesView: View {
                                 onVerOrden: {
                                     ordenIdSeleccionada = orden.id
                                     irAEstadoOrden = true
-                                },
-                                onBorrarOrden: {
-                                    serverOcultarOrden(ordenid: orden.id)
                                 }
                             )
                             .listRowInsets(EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12))
@@ -84,10 +77,8 @@ struct OrdenesView: View {
         }
         .navigationDestination(isPresented: $irAEstadoOrden) {
             EstadoOrdenView(idOrden: ordenIdSeleccionada)
-           
         }
         .onReceive(viewModel.$loadingSpinner) { loading in openLoadingSpinner = loading }
-        .onReceive(viewModelOcultar.$loadingSpinner) { loading in openLoadingSpinner = loading }
         .onAppear { cargarOrdenes() }
         .toast(isPresenting: $toastViewModel.showToastBool, alert: { toastViewModel.customToast })
     }
@@ -112,7 +103,6 @@ struct OrdenesView: View {
         }
     }
     
-    // 👇 Usa withCheckedContinuation para que el refreshable espere la respuesta
     func refreshOrdenes() async {
         await withCheckedContinuation { continuation in
             viewModel.listadoOrdenesRX(clienteid: idUsuario) { result in
@@ -131,22 +121,6 @@ struct OrdenesView: View {
             }
         }
     }
-    
-    func serverOcultarOrden(ordenid: Int) {
-        viewModelOcultar.ocultarOrdenRX(ordenid: ordenid) { result in
-            switch result {
-            case .success(let modelo):
-                switch modelo.success {
-                case 1:
-                    self.cargarOrdenes()
-                default:
-                    self.toastViewModel.showCustomToast(with: "Error, intentar de nuevo", tipoColor: .gris)
-                }
-            case .failure:
-                self.toastViewModel.showCustomToast(with: "Error, intentar de nuevo", tipoColor: .gris)
-            }
-        }
-    }
 }
 
 // ── CARD ORDEN ────────────────────────────────────────────────────
@@ -157,7 +131,6 @@ struct CardOrdenView: View {
     let colorVerde: Color
     let colorRojo: Color
     let onVerOrden: () -> Void
-    let onBorrarOrden: () -> Void
     
     var esCancelada: Bool { orden.estado_cancelada == 1 }
     
@@ -204,24 +177,21 @@ struct CardOrdenView: View {
                     .foregroundColor(colorRojo)
             }
             
-            HStack {
-                Spacer()
-                Button(action: {
-                    if esCancelada {
-                        onBorrarOrden()
-                    } else {
-                        onVerOrden()
+            // Botón Ver orden solo si NO está cancelada
+            if !esCancelada {
+                HStack {
+                    Spacer()
+                    Button(action: { onVerOrden() }) {
+                        Text("Ver orden")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 18)
+                            .padding(.vertical, 10)
+                            .background(colorVerde)
+                            .cornerRadius(12)
                     }
-                }) {
-                    Text(esCancelada ? "Borrar orden" : "Ver orden")
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 18)
-                        .padding(.vertical, 10)
-                        .background(esCancelada ? colorRojo : colorVerde)
-                        .cornerRadius(12)
+                    .buttonStyle(PlainButtonStyle())
                 }
-                .buttonStyle(PlainButtonStyle())
             }
         }
         .padding(16)
