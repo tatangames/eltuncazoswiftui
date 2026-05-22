@@ -907,3 +907,90 @@ class OcultarOrdenViewModel: ObservableObject {
         .disposed(by: disposeBag)
     }
 }
+
+
+
+class InformacionOrdenViewModel: ObservableObject {
+    @Published var loadingSpinner: Bool = false
+    @Published var isRequestInProgress: Bool = false
+    let disposeBag = DisposeBag()
+    
+    func informacionOrdenRX(ordenid: Int, completion: @escaping (Result<ModeloOrdenesIndividual, Error>) -> Void) {
+        isRequestInProgress = true
+        loadingSpinner = true
+        let parameters: [String: Any] = ["ordenid": ordenid]
+        
+        Observable<ModeloOrdenesIndividual>.create { observer in
+            let request = AF.request(apiEstadoOrden, method: .post, parameters: parameters)
+                .responseDecodable(of: ModeloOrdenesIndividual.self) { response in
+                    switch response.result {
+                    case .success(let modelo): observer.onNext(modelo); observer.onCompleted()
+                    case .failure(let error): observer.onError(error)
+                    }
+                }
+            return Disposables.create { request.cancel() }
+        }
+        .retry(when: { errors in
+            errors.enumerated().flatMap { _ in
+                Observable<Int>.timer(.seconds(2), scheduler: MainScheduler.instance)
+            }
+        })
+        .subscribe(
+            onNext: { modelo in self.loadingSpinner = false; self.isRequestInProgress = false; completion(.success(modelo)) },
+            onError: { error in self.loadingSpinner = false; self.isRequestInProgress = false; completion(.failure(error)) }
+        )
+        .disposed(by: disposeBag)
+    }
+}
+
+class ListadoProductosOrdenViewModel: ObservableObject {
+    @Published var loadingSpinner: Bool = false
+    let disposeBag = DisposeBag()
+    
+    func listadoProductosRX(ordenid: Int, completion: @escaping (Result<ModeloProductosDeOrden, Error>) -> Void) {
+        loadingSpinner = true
+        let parameters: [String: Any] = ["ordenid": ordenid]
+        
+        Observable<ModeloProductosDeOrden>.create { observer in
+            let request = AF.request(apiListadoProductosOrden, method: .post, parameters: parameters)
+                .responseDecodable(of: ModeloProductosDeOrden.self) { response in
+                    switch response.result {
+                    case .success(let modelo): observer.onNext(modelo); observer.onCompleted()
+                    case .failure(let error): observer.onError(error)
+                    }
+                }
+            return Disposables.create { request.cancel() }
+        }
+        .subscribe(
+            onNext: { modelo in self.loadingSpinner = false; completion(.success(modelo)) },
+            onError: { error in self.loadingSpinner = false; completion(.failure(error)) }
+        )
+        .disposed(by: disposeBag)
+    }
+}
+
+class CancelarOrdenViewModel: ObservableObject {
+    @Published var loadingSpinner: Bool = false
+    let disposeBag = DisposeBag()
+    
+    func cancelarOrdenRX(ordenid: Int, completion: @escaping (Result<ModeloDatosBasicos, Error>) -> Void) {
+        loadingSpinner = true
+        let parameters: [String: Any] = ["ordenid": ordenid]
+        
+        Observable<ModeloDatosBasicos>.create { observer in
+            let request = AF.request(apiCancelarOrden, method: .post, parameters: parameters)
+                .responseDecodable(of: ModeloDatosBasicos.self) { response in
+                    switch response.result {
+                    case .success(let modelo): observer.onNext(modelo); observer.onCompleted()
+                    case .failure(let error): observer.onError(error)
+                    }
+                }
+            return Disposables.create { request.cancel() }
+        }
+        .subscribe(
+            onNext: { modelo in self.loadingSpinner = false; completion(.success(modelo)) },
+            onError: { error in self.loadingSpinner = false; completion(.failure(error)) }
+        )
+        .disposed(by: disposeBag)
+    }
+}

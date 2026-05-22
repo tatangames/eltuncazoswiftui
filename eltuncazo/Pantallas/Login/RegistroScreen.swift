@@ -1,10 +1,3 @@
-//
-//  RegistroScreen.swift
-//  eltuncazo
-//
-//  Created by Jonathan on 21/5/26.
-//
-
 import SwiftUI
 import SwiftyJSON
 import RxSwift
@@ -20,16 +13,13 @@ struct RegistroView: View {
     @State private var openLoadingSpinner: Bool = false
     @State private var boolCambiarVista = false
     
-    // Modal 1 botón
     @State private var showModal: Bool = false
     @State private var modalMensaje: String = ""
     
-    // Modal con título (para respuestas de API)
     @State private var showModalTitulo: Bool = false
     @State private var modalTitulo: String = ""
     @State private var modalMensajeTitulo: String = ""
     
-    // Modal confirmación 2 botones
     @State private var showModal2Botones: Bool = false
     
     @StateObject private var toastViewModel = ToastViewModel()
@@ -40,29 +30,44 @@ struct RegistroView: View {
     let colorPrimario = Color(hex: "#512DA8")
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.white.ignoresSafeArea()
+        ZStack {
+            Color.white.ignoresSafeArea()
+            
+            VStack(spacing: 0) {
                 
+                // ── TOOLBAR ──────────────────────────────────────
+                ZStack {
+                    colorPrimario.ignoresSafeArea(edges: .top)
+                    
+                    HStack {
+                        Button(action: { dismiss() }) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(.white)
+                        }
+                        .padding(.leading, 16)
+                        
+                        Spacer()
+                        
+                        Text("Registro")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.left")
+                            .foregroundColor(.clear)
+                            .padding(.trailing, 16)
+                    }
+                    .padding(.top, 8)
+                }
+                .frame(height: 56)
+                
+                // ── CONTENIDO ────────────────────────────────────
                 ScrollView {
                     VStack(spacing: 0) {
                         
-                        // ── BLOQUE SUPERIOR ──────────────────────────
-                        ZStack(alignment: .center) {
-                            colorPrimario
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 100)
-                            
-                            Text("Crear una cuenta")
-                                .font(.custom("Arthura-Medium", size: 30))
-                                .foregroundColor(.white)
-                                .multilineTextAlignment(.center)
-                                .frame(maxWidth: .infinity)
-                                .padding(.horizontal, 24)
-                                .padding(.top, 16)
-                        }
-                        
-                        // ── WAVE ─────────────────────────────────────
+                        // ── WAVE ─────────────────────────────────
                         Image("icono_wave")
                             .resizable()
                             .frame(maxWidth: .infinity)
@@ -71,10 +76,9 @@ struct RegistroView: View {
                         
                         Spacer().frame(height: 4)
                         
-                        // ── CARD ─────────────────────────────────────
+                        // ── CARD ─────────────────────────────────
                         VStack(spacing: 0) {
                             
-                            // Campo usuario
                             BloqueTextFieldLoginView(
                                 text: $usuario,
                                 maxLength: 20
@@ -82,24 +86,23 @@ struct RegistroView: View {
                             
                             Spacer().frame(height: 12)
                             
-                            // Campo password
                             BloqueTextFieldPasswordView(
                                 text: $password,
                                 isPasswordVisible: $isPasswordVisible,
                                 maxLength: 16
                             )
                             
-                            // Texto mínimo 4 caracteres
+                            Spacer().frame(height: 12)
+                            
                             Text("Mínimo 4 caracteres")
-                                .font(.system(size: 12))
+                                .font(.system(size: 14))
                                 .foregroundColor(.gray)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.leading, 4)
                                 .padding(.top, 4)
                             
-                            Spacer().frame(height: 16)
+                            Spacer().frame(height: 20)
                             
-                            // Botón registrarse
                             Button(action: {
                                 hideKeyboard()
                                 validarRegistro()
@@ -129,75 +132,72 @@ struct RegistroView: View {
                     .padding(.bottom, keyboardHeight)
                 }
                 .onTapGesture { hideKeyboard() }
-                
-                // Modal 1 botón (validaciones)
-                if showModal {
-                    CustomModal1ButtonView(
-                        isActive: $showModal,
-                        title: "Aviso",
-                        message: modalMensaje
-                    )
-                    .zIndex(20)
-                }
-                
-                // Modal 1 botón con título (respuestas API)
-                if showModalTitulo {
-                    CustomModal1ButtonView(
-                        isActive: $showModalTitulo,
-                        title: modalTitulo,
-                        message: modalMensajeTitulo
-                    )
-                    .zIndex(20)
-                }
-                
-                // Modal 2 botones (confirmación)
-                if showModal2Botones {
-                    CustomModal2ButtonsView(
-                        isActive: $showModal2Botones,
-                        message: "¿Deseas registrarte?",
-                        onAccept: {
-                            showModal2Botones = false
-                            serverRegistro()
-                        },
-                        labelAceptar: "Sí",
-                        labelCancelar: "No"
-                    )
-                    .zIndex(20)
-                }
-                
-                // Spinner
-                if openLoadingSpinner {
-                    LoadingSpinnerView()
-                        .transition(.opacity)
-                        .zIndex(10)
+            }
+            
+            // ── MODALES ───────────────────────────────────────────
+            if showModal {
+                CustomModal1ButtonView(
+                    isActive: $showModal,
+                    title: "Aviso",
+                    message: modalMensaje
+                )
+                .zIndex(20)
+            }
+            
+            if showModalTitulo {
+                CustomModal1ButtonView(
+                    isActive: $showModalTitulo,
+                    title: modalTitulo,
+                    message: modalMensajeTitulo
+                )
+                .zIndex(20)
+            }
+            
+            if showModal2Botones {
+                CustomModal2ButtonsView(
+                    isActive: $showModal2Botones,
+                    message: "¿Deseas registrarte?",
+                    onAccept: {
+                        showModal2Botones = false
+                        serverRegistro()
+                    },
+                    labelAceptar: "Sí",
+                    labelCancelar: "No"
+                )
+                .zIndex(20)
+            }
+            
+            if openLoadingSpinner {
+                LoadingSpinnerView()
+                    .transition(.opacity)
+                    .zIndex(10)
+            }
+        }
+        .navigationBarHidden(true)
+        .navigationDestination(isPresented: $boolCambiarVista) {
+            PrincipalView()
+        }
+        .onReceive(viewModel.$loadingSpinner) { loading in
+            openLoadingSpinner = loading
+        }
+        .onAppear {
+            NotificationCenter.default.addObserver(
+                forName: UIResponder.keyboardWillShowNotification,
+                object: nil, queue: .main
+            ) { notification in
+                if let frame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                    withAnimation(.easeOut(duration: 0.16)) { keyboardHeight = frame.height }
                 }
             }
-            .navigationDestination(isPresented: $boolCambiarVista) {
-                 PrincipalView()
+            NotificationCenter.default.addObserver(
+                forName: UIResponder.keyboardWillHideNotification,
+                object: nil, queue: .main
+            ) { _ in
+                withAnimation(.easeOut(duration: 0.16)) { keyboardHeight = 0 }
             }
-            .onReceive(viewModel.$loadingSpinner) { loading in
-                openLoadingSpinner = loading
-            }
-            .onAppear {
-                NotificationCenter.default.addObserver(
-                    forName: UIResponder.keyboardWillShowNotification,
-                    object: nil, queue: .main
-                ) { notification in
-                    if let frame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
-                        withAnimation(.easeOut(duration: 0.16)) { keyboardHeight = frame.height }
-                    }
-                }
-                NotificationCenter.default.addObserver(
-                    forName: UIResponder.keyboardWillHideNotification,
-                    object: nil, queue: .main
-                ) { _ in
-                    withAnimation(.easeOut(duration: 0.16)) { keyboardHeight = 0 }
-                }
-            }
-            .onDisappear {
-                NotificationCenter.default.removeObserver(self)
-            }
-            .background(Color.white)
+        }
+        .onDisappear {
+            NotificationCenter.default.removeObserver(self)
         }
         .toast(isPresenting: $toastViewModel.showToastBool, alert: {
             toastViewModel.customToast
@@ -233,21 +233,17 @@ struct RegistroView: View {
                     let success = json["success"].int ?? 0
                     switch success {
                     case 1:
-                        // Usuario ya registrado
                         modalTitulo = json["titulo"].string ?? ""
                         modalMensajeTitulo = json["mensaje"].string ?? ""
                         showModalTitulo = true
                     case 2:
-                        // Registrado correctamente
                         let _id = json["id"].string ?? ""
                         idUsuario = _id
-                        
                         boolCambiarVista = true
-                    
                     default:
                         mensajeError()
                     }
-                case .failure(_):
+                case .failure:
                     mensajeError()
                 }
             }, onError: { _ in

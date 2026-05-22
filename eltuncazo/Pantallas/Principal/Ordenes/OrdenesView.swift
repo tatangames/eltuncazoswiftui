@@ -83,8 +83,8 @@ struct OrdenesView: View {
             }
         }
         .navigationDestination(isPresented: $irAEstadoOrden) {
-            // EstadoOrdenView(idOrden: ordenIdSeleccionada)
-            Text("Estado Orden \(ordenIdSeleccionada)")
+            EstadoOrdenView(idOrden: ordenIdSeleccionada)
+           
         }
         .onReceive(viewModel.$loadingSpinner) { loading in openLoadingSpinner = loading }
         .onReceive(viewModelOcultar.$loadingSpinner) { loading in openLoadingSpinner = loading }
@@ -162,45 +162,45 @@ struct CardOrdenView: View {
     var esCancelada: Bool { orden.estado_cancelada == 1 }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 10) {
             
             Text("#Orden: \(orden.id)")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(.black)
             
             if let fecha = orden.fecha_orden {
                 Text("Fecha: \(fecha)")
-                    .font(.system(size: 15))
+                    .font(.system(size: 16))
                     .foregroundColor(.black)
             }
             
             if let total = orden.total {
                 Text("Total: \(total)")
-                    .font(.system(size: 15))
+                    .font(.system(size: 16))
                     .foregroundColor(.black)
             }
             
             if let direccion = orden.direccion {
                 Text("Dirección: \(direccion)")
-                    .font(.system(size: 15))
+                    .font(.system(size: 16))
                     .foregroundColor(.black)
             }
             
             if let estado = orden.estado {
                 Text("Estado: \(estado)")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(.black)
             }
             
             if let nota = orden.nota_orden, !nota.isEmpty {
                 Text("Nota: \(nota)")
-                    .font(.system(size: 14))
+                    .font(.system(size: 15))
                     .foregroundColor(.black)
             }
             
             if esCancelada, let msg = orden.mensaje_cancelado, !msg.isEmpty {
                 Text("Cancelada: \(msg)")
-                    .font(.system(size: 15, weight: .medium))
+                    .font(.system(size: 16, weight: .medium))
                     .foregroundColor(colorRojo)
             }
             
@@ -214,17 +214,17 @@ struct CardOrdenView: View {
                     }
                 }) {
                     Text(esCancelada ? "Borrar orden" : "Ver orden")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 10)
                         .background(esCancelada ? colorRojo : colorVerde)
                         .cornerRadius(12)
                 }
                 .buttonStyle(PlainButtonStyle())
             }
         }
-        .padding(14)
+        .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.white)
         .cornerRadius(16)

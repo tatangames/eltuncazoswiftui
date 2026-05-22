@@ -12,7 +12,6 @@ struct SplashScreenView: View {
     @State private var isReady = false
     
     var body: some View {
-        
         if isReady {
             if id.isEmpty {
                 LoginView()
@@ -23,11 +22,21 @@ struct SplashScreenView: View {
             Color.white
                 .ignoresSafeArea()
                 .onAppear {
-                    // pequeño delay para que AppStorage cargue el valor
+                    migrateIfNeeded()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         isReady = true
                     }
                 }
+        }
+    }
+    
+    // SI QUIERO OTRO CIERRE FORZADO, CAMBIAR A hasMigratedV3
+    func migrateIfNeeded() {
+        let hasMigrated = UserDefaults.standard.bool(forKey: "hasMigratedV2")
+        if !hasMigrated {
+            // Limpiar sesión la primera vez que corre esta versión
+            id = ""
+            UserDefaults.standard.set(true, forKey: "hasMigratedV2")
         }
     }
 }

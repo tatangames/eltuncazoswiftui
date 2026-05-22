@@ -1,10 +1,3 @@
-//
-//  PrincipalScreen.swift
-//  eltuncazo
-//
-//  Created by Jonathan on 21/5/26.
-//
-
 import SwiftUI
 
 struct PrincipalView: View {
@@ -12,7 +5,6 @@ struct PrincipalView: View {
     @State private var selectedTab: String = "menu"
     @State private var irACarrito: Bool = false
     @State private var canClickCart: Bool = true
-    
     @State private var irAPerfil: Bool = false
     
     let colorPrimario = Color(hex: "#512DA8")
@@ -24,7 +16,6 @@ struct PrincipalView: View {
                 VStack(spacing: 0) {
                     
                     // ── TOOLBAR SUPERIOR ─────────────────────────
-                  
                     ZStack {
                         colorPrimario
                             .ignoresSafeArea(edges: .top)
@@ -33,7 +24,7 @@ struct PrincipalView: View {
                             Spacer()
                             
                             Text("El Tuncazo")
-                                .font(.system(size: 20, weight: .bold))
+                                .font(.system(size: 22, weight: .bold))
                                 .foregroundColor(.white)
                             
                             Spacer()
@@ -46,10 +37,10 @@ struct PrincipalView: View {
                                 Spacer()
                                 
                                 Button(action: {
-                                     irAPerfil = true
+                                    irAPerfil = true
                                 }) {
                                     Image(systemName: "person.circle.fill")
-                                        .font(.system(size: 26))
+                                        .font(.system(size: 28))
                                         .foregroundColor(.white)
                                 }
                                 .padding(.trailing, 16)
@@ -57,17 +48,7 @@ struct PrincipalView: View {
                             }
                         }
                     }
-                    .frame(height: 56)
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
+                    .frame(height: 60)
                     
                     // ── CONTENIDO ────────────────────────────────
                     Group {
@@ -84,24 +65,24 @@ struct PrincipalView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .padding(.bottom, 60)
+                .padding(.bottom, 68)
                 
                 // ── BOTTOM BAR PERSONALIZADO ─────────────────────
                 ZStack {
                     Rectangle()
                         .fill(Color.white)
                         .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: -2)
-                        .frame(height: 60)
+                        .frame(height: 68)
                     
                     HStack(spacing: 0) {
                         
                         // Tab Menú
                         Button(action: { selectedTab = "menu" }) {
-                            VStack(spacing: 2) {
+                            VStack(spacing: 4) {
                                 Image(systemName: "fork.knife")
-                                    .font(.system(size: 20))
+                                    .font(.system(size: 22))
                                 Text("Menú")
-                                    .font(.system(size: 11, weight: selectedTab == "menu" ? .bold : .regular))
+                                    .font(.system(size: 12, weight: selectedTab == "menu" ? .bold : .regular))
                             }
                             .foregroundColor(selectedTab == "menu" ? colorPrimario : .gray)
                             .frame(maxWidth: .infinity)
@@ -112,17 +93,17 @@ struct PrincipalView: View {
                         
                         // Tab Órdenes
                         Button(action: { selectedTab = "ordenes" }) {
-                            VStack(spacing: 2) {
+                            VStack(spacing: 4) {
                                 Image(systemName: "list.bullet.rectangle")
-                                    .font(.system(size: 20))
+                                    .font(.system(size: 22))
                                 Text("Órdenes")
-                                    .font(.system(size: 11, weight: selectedTab == "ordenes" ? .bold : .regular))
+                                    .font(.system(size: 12, weight: selectedTab == "ordenes" ? .bold : .regular))
                             }
                             .foregroundColor(selectedTab == "ordenes" ? colorPrimario : .gray)
                             .frame(maxWidth: .infinity)
                         }
                     }
-                    .frame(height: 60)
+                    .frame(height: 68)
                     
                     // FAB centrado
                     Button(action: {
@@ -136,15 +117,15 @@ struct PrincipalView: View {
                         ZStack {
                             Circle()
                                 .fill(Color.white)
-                                .frame(width: 56, height: 56)
+                                .frame(width: 62, height: 62)
                                 .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 2)
                             
                             Image(systemName: "cart.fill")
-                                .font(.system(size: 22))
+                                .font(.system(size: 26))
                                 .foregroundColor(Color(hex: "#448AFF"))
                         }
                     }
-                    .offset(y: -20)
+                    .offset(y: -22)
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -154,10 +135,8 @@ struct PrincipalView: View {
                 CarritoComprasView()
             }
             .navigationDestination(isPresented: $irAPerfil) {
-                 PerfilView()
+                PerfilView()
             }
         }
     }
 }
-
-

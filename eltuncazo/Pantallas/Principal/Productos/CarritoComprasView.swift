@@ -21,6 +21,7 @@ struct CarritoComprasView: View {
     @State private var showModalBorrarCarrito: Bool = false
     @State private var showModalBorrarProducto: Bool = false
     @State private var carritoidAEliminar: Int = 0
+    @State private var irADirecciones: Bool = false
     
     let colorPrimario = Color(hex: "#512DA8")
     let colorNaranja = Color(hex: "#F57C00")
@@ -145,7 +146,9 @@ struct CarritoComprasView: View {
                     
                     Button(action: {
                         if carritoVacio { return }
-                        if !hayDireccionRegistrada { return }
+                        if !hayDireccionRegistrada {
+                            irADirecciones = true
+                            return }
                         if !hayProductoNoDisponible {
                             // navegar a enviar orden
                             irAEnviarOrden = true
@@ -275,6 +278,14 @@ struct CarritoComprasView: View {
         .onReceive(viewModelBorrarProducto.$loadingSpinner) { loading in openLoadingSpinner = loading }
         .navigationDestination(isPresented: $irAEnviarOrden) {
             EnviarOrdenView()
+        }
+        .navigationDestination(isPresented: $irADirecciones) {
+            MisDireccionesView()
+                .onDisappear {
+                    // Recargar carrito al regresar para verificar si ya tiene dirección
+                    datosCargados = false
+                    cargarCarrito()
+                }
         }
         .onAppear { cargarCarrito() }
         .toast(isPresenting: $toastViewModel.showToastBool, alert: { toastViewModel.customToast })

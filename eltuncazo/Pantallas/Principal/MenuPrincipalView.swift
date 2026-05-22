@@ -1,10 +1,3 @@
-//
-//  MenuPrincipalView.swift
-//  eltuncazo
-//
-//  Created by Jonathan on 21/5/26.
-//
-
 import SwiftUI
 import SwiftyJSON
 import RxSwift
@@ -18,7 +11,6 @@ struct MenuPrincipalView: View {
     @State private var openLoadingSpinner: Bool = false
     @StateObject private var toastViewModel = ToastViewModel()
     
-    // Navegación a productos
     @State private var irAProductos: Bool = false
     @State private var idCategoriaSeleccionada: Int = 0
     @State private var nombreCategoriaSeleccionada: String = ""
@@ -32,8 +24,9 @@ struct MenuPrincipalView: View {
             
             ScrollView {
                 LazyVStack(spacing: 0) {
-                    ForEach(categorias, id: \.id) { categoria in
+                    ForEach(Array(categorias.enumerated()), id: \.element.id) { index, categoria in
                         let imagenUrl = "\(baseUrlImagen)\(categoria.imagen ?? "")"
+                        let esUltimo = index == categorias.count - 1
                         
                         CardCategoriaView(
                             imagenUrl: imagenUrl,
@@ -45,6 +38,7 @@ struct MenuPrincipalView: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 6)
+                        .padding(.bottom, esUltimo ? 80 : 0) // 👈 espacio extra en el último
                     }
                 }
                 .padding(.top, 8)

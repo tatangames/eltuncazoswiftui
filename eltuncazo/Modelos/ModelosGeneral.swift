@@ -93,6 +93,7 @@ struct ModeloInformacionProductoArray: Codable {
 
 struct ModeloDatosBasicos: Codable {
     let success: Int
+    let titulo: String?
     let mensaje: String?
 }
 
@@ -159,4 +160,38 @@ struct ModeloOrdenesArray: Codable {
     let nota_orden: String?
     let estado_cancelada: Int
     let mensaje_cancelado: String?
+}
+
+
+struct ModeloOrdenesIndividual: Codable {
+    let success: Int
+    let ordenes: [ModeloOrdenesIndividualArray]?
+}
+
+struct ModeloOrdenesIndividualArray: Codable {
+    let id: Int
+    let fecha_orden: String?
+    let estado_iniciada: Int
+    let fecha_iniciada: String?
+    let estado_cancelada: Int
+    let fecha_cancelada: String?
+    let nota_cancelada: String?
+    let texto_iniciada: String?
+    let fecha_estimada_txt: String?
+}
+
+struct ModeloProductosDeOrden: Codable {
+    let success: Int
+    let productos: [ModeloProductosDeOrdenArray]?
+}
+
+struct ModeloProductosDeOrdenArray: Codable {
+    let productoID: Int
+    let nombre: String?
+    let utiliza_imagen: Int
+    let imagen: String?
+    let precio: String?
+    let cantidad: Int
+    let nota: String?
+    let multiplicado: String?
 }

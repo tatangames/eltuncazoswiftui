@@ -602,15 +602,15 @@ struct CardDireccionView: View {
                 }
             }
             
-            Rectangle()
-                .fill(Color.gray.opacity(0.2))
-                .frame(height: 1)
-            
-            // Botones acción
-            HStack(spacing: 12) {
+            // Botones solo si NO es la dirección principal seleccionada
+            if direccion.seleccionado != 1 {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.2))
+                    .frame(height: 1)
                 
-                // Seleccionar - solo si NO está seleccionada
-                if direccion.seleccionado != 1 {
+                HStack(spacing: 12) {
+                    
+                    // Seleccionar
                     Button(action: onSeleccionar) {
                         HStack(spacing: 6) {
                             Image(systemName: "checkmark.circle.fill")
@@ -625,23 +625,23 @@ struct CardDireccionView: View {
                         .cornerRadius(8)
                     }
                     .buttonStyle(PlainButtonStyle())
-                }
-                
-                // Eliminar - siempre visible
-                Button(action: onEliminar) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "trash.fill")
-                            .font(.system(size: 14))
-                        Text("Eliminar")
-                            .font(.system(size: 13, weight: .semibold))
+                    
+                    // Eliminar
+                    Button(action: onEliminar) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "trash.fill")
+                                .font(.system(size: 14))
+                            Text("Eliminar")
+                                .font(.system(size: 13, weight: .semibold))
+                        }
+                        .foregroundColor(colorRojo)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 36)
+                        .background(colorRojo.opacity(0.1))
+                        .cornerRadius(8)
                     }
-                    .foregroundColor(colorRojo)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 36)
-                    .background(colorRojo.opacity(0.1))
-                    .cornerRadius(8)
+                    .buttonStyle(PlainButtonStyle())
                 }
-                .buttonStyle(PlainButtonStyle())
             }
         }
         .padding(18)
