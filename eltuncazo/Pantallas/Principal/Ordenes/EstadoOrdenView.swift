@@ -109,7 +109,7 @@ struct EstadoOrdenView: View {
                             )
                             
                             // ── BOTÓN COMPLETAR ───────────────────
-                            if ord.estado_iniciada == 1 {
+                            if ord.estado_iniciada == 1 || ord.estado_cancelada == 1 {
                                 Button(action: { showModalCompletar = true }) {
                                     Text("Completar Orden")
                                         .font(.system(size: 16, weight: .semibold))
@@ -123,7 +123,7 @@ struct EstadoOrdenView: View {
                                 .frame(maxWidth: .infinity, alignment: .center)
                             }
                             
-                            // Estado cancelada
+                            // ── ESTADO CANCELADA ──────────────────
                             if ord.estado_cancelada == 1 {
                                 EstadoItemView(
                                     titulo: "Cancelada",
@@ -131,10 +131,21 @@ struct EstadoOrdenView: View {
                                     fecha: ord.fecha_cancelada,
                                     colorActivo: colorRojo
                                 )
-                                if let nota = ord.nota_cancelada, !nota.isEmpty {
-                                    Text(nota)
-                                        .font(.system(size: 16))
-                                        .foregroundColor(.red)
+                                
+                                if let nota = ord.mensaje_cancelada, !nota.isEmpty {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "exclamationmark.circle.fill")
+                                            .foregroundColor(colorRojo)
+                                            .font(.system(size: 16))
+                                        Text(nota)
+                                            .font(.system(size: 15))
+                                            .foregroundColor(colorRojo)
+                                            .fixedSize(horizontal: false, vertical: true)
+                                    }
+                                    .padding(12)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(colorRojo.opacity(0.08))
+                                    .cornerRadius(10)
                                 }
                             }
                         }

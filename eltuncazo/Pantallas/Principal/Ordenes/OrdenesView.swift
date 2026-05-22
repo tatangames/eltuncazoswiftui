@@ -177,21 +177,19 @@ struct CardOrdenView: View {
                     .foregroundColor(colorRojo)
             }
             
-            // Botón Ver orden solo si NO está cancelada
-            if !esCancelada {
-                HStack {
-                    Spacer()
-                    Button(action: { onVerOrden() }) {
-                        Text("Ver orden")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 18)
-                            .padding(.vertical, 10)
-                            .background(colorVerde)
-                            .cornerRadius(12)
-                    }
-                    .buttonStyle(PlainButtonStyle())
+            // Botón Ver orden siempre visible (cancelada o no)
+            HStack {
+                Spacer()
+                Button(action: { onVerOrden() }) {
+                    Text("Ver orden")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 10)
+                        .background(esCancelada ? colorRojo : colorVerde)
+                        .cornerRadius(12)
                 }
+                .buttonStyle(PlainButtonStyle())
             }
         }
         .padding(16)

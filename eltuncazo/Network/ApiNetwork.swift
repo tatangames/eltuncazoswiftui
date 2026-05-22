@@ -9,11 +9,11 @@
 // se utiliza en sidebar pie de pagina
 let apiVersionApp = "v. 2.0.0"
 
-//let baseUrl = "http://165.22.176.229/api/"
-//let baseUrlImagen = "http://165.22.176.229/storage/imagenes/"
+let baseUrl = "http://165.22.176.229/api/"
+let baseUrlImagen = "http://165.22.176.229/storage/imagenes/"
 
-let baseUrl = "http://192.168.75.128:8000/api/"
-let baseUrlImagen = "http://192.168.75.128:8000/storage/imagenes/"
+//let baseUrl = "http://192.168.75.128:8000/api/"
+//let baseUrlImagen = "http://192.168.75.128:8000/storage/imagenes/"
 
 let apiLogin = baseUrl+"cliente/login"
 let apiRegistro = baseUrl+"cliente/registro"

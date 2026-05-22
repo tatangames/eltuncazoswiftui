@@ -175,7 +175,7 @@ struct ModeloOrdenesIndividualArray: Codable {
     let fecha_iniciada: String?
     let estado_cancelada: Int
     let fecha_cancelada: String?
-    let nota_cancelada: String?
+    let mensaje_cancelada: String?
     let texto_iniciada: String?
     let fecha_estimada_txt: String?
 }
