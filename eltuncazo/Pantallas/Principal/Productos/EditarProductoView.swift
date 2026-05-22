@@ -1,11 +1,6 @@
-//
-//  EditarProductoView.swift
-//  eltuncazo
-//
-//  Created by Jonathan on 21/5/26.
-//
 import SwiftUI
 import AlertToast
+
 struct EditarProductoView: View {
     
     @Environment(\.dismiss) private var dismiss
@@ -72,7 +67,17 @@ struct EditarProductoView: View {
                 .frame(height: 56)
                 
                 // ── CONTENIDO ────────────────────────────────────
-                if let prod = producto {
+                if producto == nil {
+                    // Spinner debajo del toolbar
+                    VStack {
+                        Spacer()
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: colorPrimario))
+                            .scaleEffect(1.5)
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let prod = producto {
                     ScrollView {
                         VStack(spacing: 0) {
                             
@@ -293,23 +298,19 @@ struct EditarProductoView: View {
             if showModalNota {
                 ZStack {
                     Color.black.opacity(0.4).ignoresSafeArea()
-                    
                     VStack(spacing: 0) {
                         Text("Nota Requerida")
                             .font(.system(size: 17, weight: .bold))
                             .foregroundColor(.black)
                             .padding(.top, 20)
                             .padding(.horizontal, 20)
-                        
                         Text(notaMensaje)
                             .font(.system(size: 15))
                             .foregroundColor(.black)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 16)
-                        
                         Rectangle().fill(Color.gray.opacity(0.3)).frame(height: 1)
-                        
                         Button(action: { showModalNota = false }) {
                             Text("Aceptar")
                                 .font(.system(size: 16, weight: .bold))
@@ -326,7 +327,8 @@ struct EditarProductoView: View {
                 .zIndex(20)
             }
             
-            if openLoadingSpinner {
+            // Spinner solo cuando ya hay datos (para actualizar)
+            if openLoadingSpinner && producto != nil {
                 LoadingSpinnerView()
                     .transition(.opacity)
                     .zIndex(10)
@@ -374,7 +376,7 @@ struct EditarProductoView: View {
                 case 1, 2:
                     self.toastViewModel.showCustomToast(with: "Actualizado", tipoColor: .verde)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                        self.dismiss() // 👈 solo dismiss, el onChange del carrito recarga
+                        self.dismiss()
                     }
                 default:
                     self.toastViewModel.showCustomToast(with: "Error, intentar de nuevo", tipoColor: .gris)
@@ -389,4 +391,3 @@ struct EditarProductoView: View {
         return String(format: "$%.2f", monto)
     }
 }
-

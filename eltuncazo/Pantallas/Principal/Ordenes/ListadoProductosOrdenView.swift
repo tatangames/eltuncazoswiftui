@@ -47,7 +47,17 @@ struct ListadoProductosOrdenView: View {
                 .frame(height: 56)
                 
                 // ── CONTENIDO ────────────────────────────────────
-                if datosCargados {
+                if !datosCargados {
+                    // Spinner dentro del área de contenido, debajo del toolbar
+                    VStack {
+                        Spacer()
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: colorPrimario))
+                            .scaleEffect(1.5)
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
                     if productos.isEmpty {
                         VStack(spacing: 12) {
                             Image(systemName: "cart")
@@ -71,10 +81,6 @@ struct ListadoProductosOrdenView: View {
                         }
                     }
                 }
-            }
-            
-            if openLoadingSpinner {
-                LoadingSpinnerView().transition(.opacity).zIndex(10)
             }
         }
         .navigationBarHidden(true)
@@ -118,7 +124,6 @@ struct ProductoOrdenCardView: View {
     var body: some View {
         ZStack(alignment: .trailing) {
             
-            // Texto lado izquierdo
             VStack(alignment: .leading, spacing: 8) {
                 Text(producto.nombre ?? "")
                     .font(.system(size: 17, weight: .semibold))
@@ -146,7 +151,6 @@ struct ProductoOrdenCardView: View {
             .padding(.trailing, imageSlot)
             .frame(maxWidth: .infinity, alignment: .leading)
             
-            // Imagen derecha
             Group {
                 if traeImagen {
                     AsyncImage(url: URL(string: "\(baseUrlImagen)\(producto.imagen ?? "")")) { phase in

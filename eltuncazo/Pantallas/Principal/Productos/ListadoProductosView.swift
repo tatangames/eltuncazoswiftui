@@ -1,10 +1,3 @@
-//
-//  ListadoProductosView.swift
-//  eltuncazo
-//
-//  Created by Jonathan on 21/5/26.
-//
-
 import SwiftUI
 import SwiftyJSON
 import RxSwift
@@ -24,7 +17,6 @@ struct ListadoProductosView: View {
     @State private var datosCargados: Bool = false
     @State private var openLoadingSpinner: Bool = false
     
-    // Agrega estos estados
     @State private var irAProducto: Bool = false
     @State private var idProductoSeleccionado: Int = 0
     
@@ -68,21 +60,29 @@ struct ListadoProductosView: View {
                 .frame(height: 56)
                 
                 // ── CONTENIDO ────────────────────────────────────
-                if datosCargados {
+                if !datosCargados {
+                    // Spinner debajo del toolbar
+                    VStack {
+                        Spacer()
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: colorPrimario))
+                            .scaleEffect(1.5)
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
                     ScrollView {
                         LazyVStack(spacing: 14) {
                             ForEach(categorias, id: \.id) { categoria in
                                 
-                                // Header de categoría
                                 CategoriaHeaderView(title: categoria.nombre ?? "")
                                     .padding(.horizontal, 12)
                                     .padding(.top, 4)
                                 
-                                // Productos de la categoría
                                 ForEach(categoria.productos, id: \.id) { producto in
                                     ProductoItemCardView(producto: producto) {
                                         idProductoSeleccionado = producto.id
-                                         irAProducto = true
+                                        irAProducto = true
                                     }
                                     .padding(.horizontal, 12)
                                 }
@@ -93,12 +93,6 @@ struct ListadoProductosView: View {
                         .padding(.top, 8)
                     }
                 }
-            }
-            
-            if openLoadingSpinner {
-                LoadingSpinnerView()
-                    .transition(.opacity)
-                    .zIndex(10)
             }
         }
         .navigationBarHidden(true)
@@ -180,13 +174,12 @@ struct ProductoItemCardView: View {
         Button(action: onClick) {
             ZStack(alignment: .trailing) {
                 
-                // Texto lado izquierdo
                 VStack(alignment: .leading, spacing: 6) {
                     Text(producto.nombre ?? "")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.black)
                         .multilineTextAlignment(.leading)
-                                      
+                    
                     if let precio = producto.precio, !precio.isEmpty {
                         Text("$\(precio)")
                             .font(.system(size: 15, weight: .bold))
@@ -197,7 +190,6 @@ struct ProductoItemCardView: View {
                 .padding(.trailing, imageSlot)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                // Imagen lado derecho
                 Group {
                     if traeImagen {
                         AsyncImage(url: URL(string: imagenUrl)) { phase in

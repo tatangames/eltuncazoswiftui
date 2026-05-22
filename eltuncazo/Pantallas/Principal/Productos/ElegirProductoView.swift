@@ -67,7 +67,17 @@ struct ElegirProductoView: View {
                 .frame(height: 56)
                 
                 // ── CONTENIDO ────────────────────────────────────
-                if let prod = producto {
+                if producto == nil {
+                    // Spinner debajo del toolbar
+                    VStack {
+                        Spacer()
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: colorPrimario))
+                            .scaleEffect(1.5)
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let prod = producto {
                     ScrollView {
                         VStack(spacing: 0) {
                             
@@ -77,9 +87,7 @@ struct ElegirProductoView: View {
                                 AsyncImage(url: URL(string: "\(baseUrlImagen)\(img)")) { phase in
                                     switch phase {
                                     case .success(let image):
-                                        image
-                                            .resizable()
-                                            .scaledToFit()
+                                        image.resizable().scaledToFit()
                                     case .empty:
                                         ProgressView()
                                     case .failure:
@@ -97,14 +105,11 @@ struct ElegirProductoView: View {
                             
                             // ── CARD INFO ─────────────────────────
                             VStack(alignment: .leading, spacing: 12) {
-                                
-                                // Nombre
                                 Text(prod.nombre ?? "")
                                     .font(.system(size: 22, weight: .bold))
                                     .foregroundColor(colorPrimario)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                                // Descripción
                                 if let desc = prod.descripcion, !desc.isEmpty {
                                     Text(desc
                                         .replacingOccurrences(of: "\\r\\n", with: "\n")
@@ -115,7 +120,6 @@ struct ElegirProductoView: View {
                                         .lineSpacing(4)
                                 }
                                 
-                                // Precio unitario
                                 HStack(spacing: 4) {
                                     Text("Precio:")
                                         .font(.system(size: 17, weight: .medium))
@@ -189,7 +193,6 @@ struct ElegirProductoView: View {
                             
                             // ── CARD NOTAS ────────────────────────
                             VStack(alignment: .leading, spacing: 10) {
-                                
                                 HStack {
                                     Image(systemName: "note.text")
                                         .foregroundColor(colorPrimario)
@@ -255,7 +258,6 @@ struct ElegirProductoView: View {
                             
                             // ── TOTAL + BOTON ─────────────────────
                             VStack(spacing: 16) {
-                                
                                 HStack {
                                     Text("Total")
                                         .font(.system(size: 17, weight: .medium))
@@ -304,25 +306,21 @@ struct ElegirProductoView: View {
             if showModalNota {
                 ZStack {
                     Color.black.opacity(0.4).ignoresSafeArea()
-                    
                     VStack(spacing: 0) {
                         Text("Nota Requerida")
                             .font(.system(size: 17, weight: .bold))
                             .foregroundColor(.black)
                             .padding(.top, 20)
                             .padding(.horizontal, 20)
-                        
                         Text(notaMensaje)
                             .font(.system(size: 15))
                             .foregroundColor(.black)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 16)
-                        
                         Rectangle()
                             .fill(Color.gray.opacity(0.3))
                             .frame(height: 1)
-                        
                         Button(action: { showModalNota = false }) {
                             Text("Aceptar")
                                 .font(.system(size: 16, weight: .bold))
@@ -339,7 +337,8 @@ struct ElegirProductoView: View {
                 .zIndex(20)
             }
             
-            if openLoadingSpinner {
+            // Spinner solo para enviar al carrito
+            if openLoadingSpinner && producto != nil {
                 LoadingSpinnerView()
                     .transition(.opacity)
                     .zIndex(10)
@@ -406,7 +405,6 @@ struct ElegirProductoView: View {
     }
 }
 
-// ── EXTENSION PLACEHOLDER ─────────────────────────────────────────
 extension View {
     func placeholder<Content: View>(
         when shouldShow: Bool,
@@ -419,4 +417,3 @@ extension View {
         }
     }
 }
-
