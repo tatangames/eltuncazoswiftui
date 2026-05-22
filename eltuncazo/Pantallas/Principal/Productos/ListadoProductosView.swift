@@ -24,6 +24,10 @@ struct ListadoProductosView: View {
     @State private var datosCargados: Bool = false
     @State private var openLoadingSpinner: Bool = false
     
+    // Agrega estos estados
+    @State private var irAProducto: Bool = false
+    @State private var idProductoSeleccionado: Int = 0
+    
     let colorPrimario = Color(hex: "#512DA8")
     
     var body: some View {
@@ -77,7 +81,8 @@ struct ListadoProductosView: View {
                                 // Productos de la categoría
                                 ForEach(categoria.productos, id: \.id) { producto in
                                     ProductoItemCardView(producto: producto) {
-                                        // navegar a detalle producto
+                                        idProductoSeleccionado = producto.id
+                                         irAProducto = true
                                     }
                                     .padding(.horizontal, 12)
                                 }
@@ -99,6 +104,9 @@ struct ListadoProductosView: View {
         .navigationBarHidden(true)
         .onReceive(viewModel.$loadingSpinner) { loading in
             openLoadingSpinner = loading
+        }
+        .navigationDestination(isPresented: $irAProducto) {
+            ElegirProductoView(idProducto: idProductoSeleccionado)
         }
         .onAppear {
             cargarProductos()

@@ -23,11 +23,16 @@ let apiListadoDirecciones = baseUrl + "cliente/listado/direcciones"
 let apiRegistrarDireccion = baseUrl + "cliente/nueva/direccion"
 let apiSeleccionarDireccion = baseUrl + "cliente/seleccionar/direccion"
 let apiEliminarDireccion = baseUrl + "cliente/eliminar/direccion"
-
 let apiListadoProductos = baseUrl + "cliente/servicios/listado/menu"
+let apiInformacionProducto = baseUrl + "cliente/informacion/producto"
+let apiAgregarProductoCarrito = baseUrl + "cliente/carrito/producto/agregar"
+let apiVerCarrito = baseUrl + "cliente/carrito/ver/orden"
+let apiBorrarCarrito = baseUrl + "cliente/carrito/borrar/orden"
+let apiEliminarProductoCarrito = baseUrl + "cliente/carrito/eliminar/producto"
+let apiVerProductoEditar = baseUrl + "cliente/carrito/ver/producto"
+let apiActualizarProductoEditado = baseUrl + "cliente/carrito/cambiar/cantidad"
+let apiVerOrdenParaEnviar = baseUrl + "cliente/carrito/ver/proceso-orden"
+let apiEnviarOrdenFinal = baseUrl + "cliente/proceso/orden/estado-1"
 
-
-
-
-
-
+let apiListadoOrdenes = baseUrl + "cliente/ver/ordenes-activas"
+let apiOcultarOrden = baseUrl + "cliente/proceso/completar/orden"

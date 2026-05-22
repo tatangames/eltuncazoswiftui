@@ -151,7 +151,7 @@ struct PrincipalView: View {
             .ignoresSafeArea(edges: .bottom)
             .navigationBarHidden(true)
             .navigationDestination(isPresented: $irACarrito) {
-                // CarritoView()
+                CarritoComprasView()
             }
             .navigationDestination(isPresented: $irAPerfil) {
                  PerfilView()
@@ -160,14 +160,4 @@ struct PrincipalView: View {
     }
 }
 
-// Placeholder para órdenes
-struct OrdenesView: View {
-    var body: some View {
-        VStack {
-            Text("Órdenes")
-                .font(.largeTitle)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(hex: "#F5F0E8"))
-    }
-}
+
